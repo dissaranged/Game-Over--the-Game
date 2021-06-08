@@ -3,7 +3,7 @@
   <head> 
     <meta charset="UTF-8" />
     <title>Making your first Phaser 3 Game - Part 8</title>
-    <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
+    <script src="./node_modules/phaser/dist/phaser.min.js"></script>
     <style type="text/css">
       body {
           margin: 0;
@@ -40,39 +40,47 @@
       var score = 0;
       var scoreText;
       var game = new Phaser.Game(config);
-
+      let debug = !!window.location.search.match(/debug/);
       function preload ()
       {
-          this.load.image('skyscraper', 'assets/skyscraper.png');
-	  this.load.image('houses', 'assets/houses.png')
-          this.load.image('ground', 'assets/platform.png');
-          this.load.image('star', 'assets/star.png');
-          this.load.image('bomb', 'assets/bomb.png');
-          this.load.spritesheet('eboy', 'assets/eboy.png', { frameWidth: 650, frameHeight: 650 });
+          this.load.image('skyscraper', './assets/skyscraper.png');
+	  this.load.image('houses', './assets/houses.png')
+          this.load.image('ground', './assets/platform.png');
+          this.load.spritesheet('coin', './assets/coin.png', {frameWidth: 200, frameHeight: 200});
+          this.load.image('bomb', './assets/bomb.png');
+          this.load.spritesheet('eboy', './assets/eboy.png', { frameWidth: 650, frameHeight: 650 });
       }
 
       function create ()
       {
-	  const world_width = 3392;
-	  this.cameras.main.setBounds(0, 0, world_width, 786);
-          this.physics.world.setBounds(0, 0, world_width, 786);
+	  const world_width = 1024*8;
+	  const world_height = 1024;
+
+	  this.cameras.main.setBounds(0, 0, world_width, world_height);
+          this.physics.world.setBounds(0, 0, world_width, world_height);
 	  
-	  let skyscraper = this.add.tileSprite(0,0,world_width, 586,'skyscraper').setOrigin(0,0);
+	  let skyscraper = this.add.tileSprite(0,444,world_width, 586,'skyscraper').setOrigin(0,0);
 	  skyscraper.scrollFactorX = 0.7;
-	  window.skyscraper = skyscraper
-	  let houses =this.add.tileSprite(0,200,world_width, 386,'houses').setOrigin(0,0);
+	  let houses =this.add.tileSprite(0, 555, world_width, 386,'houses').setOrigin(0,0);
 	  houses.scrollFactorX = 0.9;
 	  platforms = this.physics.add.staticGroup();
+	  window.scene=this
+	  window.platforms = platforms;
 
-	  let ground = this.add.tileSprite(0, 586, world_width*8, 200, 'ground').setScale(0.2).setOrigin(0,0).setDisplayOrigin(0,-20);
-	  ground.tilePositionX = -150;
-          platforms.add(ground);
-
-          // platforms.create(600, 400, 'ground');
-          // platforms.create(50, 250, 'ground');
-          // platforms.create(750, 220, 'ground');
-
-          player = this.physics.add.sprite(100, 450, 'eboy').setScale(0.2);
+	  [
+	      {x: 0, y: 900, width:777},
+	      {x: 300, y: 666, width: 120},
+	      {x: 600, y: 800, width: 200},
+	      {x: 700, y: 555, width: 260},
+	      {x: 900, y: 777, width: 260},
+	      {x: 1170, y: 707, width: 260},
+	  ].forEach(({x,y, width}) => {
+	      this.add.tileSprite(x, y, width*2, 86, 'ground').setOrigin(0,0).setScale(0.5)
+	      let platform = this.add.rectangle(x,y+8,width,43,debug ? 0x337788:undefined, 0.5).setOrigin(0,0);
+	      platforms.add(platform);
+	  });
+	  
+          player = this.physics.add.sprite(100, 100, 'eboy').setScale(0.2);
 
           player.setBounce(0.2);
           player.setCollideWorldBounds(true);
@@ -80,13 +88,6 @@
 	  this.cameras.main.startFollow(player, true, 0.08, 0.08);
 	  this.cameras.main.setZoom(1);
 	  
-         this.anims.create({
-             key: 'left',
-             frames: this.anims.generateFrameNumbers('eboy', { frames: [4,5,6,7,8,10,11,13,14] }),
-             frameRate: 20,
-             repeat: -1
-          });
-
           this.anims.create({
               key: 'turn',
               frames: [ { key: 'eboy', frame: 17 } ],
@@ -94,7 +95,7 @@
           });
 
           this.anims.create({
-              key: 'right',
+              key: 'run',
               frames: this.anims.generateFrameNumbers('eboy', {frames:[3,4,5,6,7,8,9,10,12,13]}),
               frameRate: 20,
               repeat: -1
@@ -109,15 +110,23 @@
 
           cursors = this.input.keyboard.createCursorKeys();
 
+	  this.anims.create({
+	      key: 'rotate',
+	      frames: 'coin',
+	      frameRate:20,
+	      repeat: -1,
+	  })
           stars = this.physics.add.group({
-              key: 'star',
+              key: 'coin',
               repeat: 11,
-              setXY: { x: 12, y: 0, stepX: 70 }
+              setXY: { x: 300, y: 100, stepX: 90 }
           });
 
           stars.children.iterate(function (child) {
 
               child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+	      child.setScale(0.2);
+	      child.play('rotate');
 
           });
 
@@ -130,7 +139,7 @@
 	  this.physics.add.collider(bombs, platforms);
 	  this.physics.add.collider(player, bombs, hitBomb, null, this);
 	  
-	  scoreText = this.add.text(16,16, 'score : 0', {fontSize: '32px', fill: '#000'});
+	  scoreText = this.add.text(200, 200, 'score : 0', {fontSize: '32px', fill: '#632'});
       }
 
       function update ()
@@ -139,13 +148,13 @@
           {
               player.setVelocityX(-160);
 
-              player.anims.play('left', true);
+              player.anims.play('run', true);
 	      player.flipX = true;
           }
           else if (cursors.right.isDown)
           {
               player.setVelocityX(160);
-              player.anims.play('right', true);
+              player.anims.play('run', true);
 	      player.flipX = false;
           }
           else
