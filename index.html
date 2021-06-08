@@ -162,6 +162,7 @@
 	      key: 'die',
 	      frames: this.anims.generateFrameNumbers('elli', {start: 24, end: 50}),
 	      frameRate: 20,
+	      hideOnComplete: true
 	  });
 	  enemies.add(elli);
 	  
@@ -175,17 +176,27 @@
       {
 	  if(gameOver) return;
 	  enemies.children.iterate( enemie=> {
+	      if(!enemie.body.moves)
+		  return;
 	      if(enemie.body.touching.down) {
 		  if(enemie.x>player.x) {
-		      enemie.setVelocity(-200,-90);
+		      enemie.setVelocity(-200,-100);
 		      enemie.play('jump');
 		      enemie.flipX = false;
 		  } else {
-		      enemie.setVelocity(200,-90);
+		      enemie.setVelocity(200,-100);
 		      enemie.play('jump');
 		      enemie.flipX = true;
  		  }
-	      } 
+	      } else if (enemie.body.touching.right) {
+		  enemie.setVelocity(-100,-220);
+		  enemie.play('jump');
+		  enemie.flipX = false
+	      } else if(enemie.body.touching.left){
+		  enemie.setVelocity(100, -220);
+		  enemie.play('jump');
+		  enemie.flipX = true
+	      }
 	  })
 	  
 	  // player actions
@@ -251,13 +262,15 @@
 	  console.log('punsing :'+player.punshing)
 	  console.log(player.body.touching)
 	  console.log(player.flipX)
+	  if(!enemie.body.moves)
+	      return;
 	  if(player.punshing && (
 	     (player.body.touching.left && player.flipX) ||
 		  (player.body.touching.right && !player.flipX) )
 	    ) {
 	      enemie.anims.play('die');
 	      enemie.body.moves = false;
-	      setTimeout(()=>enemie.disableBody(true,true), 2000);
+	      setTimeout(()=>enemie.disableBody(true,true), 1300);
 	  } else {
 	      this.physics.pause();
  	      player.anims.play('die');
