@@ -1,0 +1,5 @@
+#!/bin/sh
+rm croped* eboy.png;
+magick convert J_*.png -crop 650x650+600+220 -background none -bordercolor none -border 0 -alpha on croped.png;
+magick montage croped* -geometry 650x650+0+0  -background none eboy.png;
+cp eboy.png ../../assets/eboy.png
