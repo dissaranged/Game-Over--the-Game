@@ -3,9 +3,9 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { DefinePlugin } = require('webpack');
 
 module.exports = {
-    mode: 'development',
+    mode: 'none',
     entry: {
-	app: './src/index.js',
+	app: './src/main.js',
     },
 
     output: {
@@ -21,7 +21,7 @@ module.exports = {
 	new CopyWebpackPlugin(
 	    {
 		patterns: [
-		    path.resolve(__dirname, 'index.html'), 
+		    path.resolve(__dirname, 'main.html'), 
 		    path.resolve(__dirname, 'assets', '**', '*'),
 		]
 	    }
