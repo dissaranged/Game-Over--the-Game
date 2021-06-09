@@ -4,8 +4,13 @@
   },
   "devDependencies": {
     "copy-webpack-plugin": "^9.0.0",
+    "eslint": "^7.28.0",
     "webpack": "^5.38.1",
     "webpack-cli": "^4.7.2",
     "webpack-dev-server": "^3.11.2"
+  },
+  "scripts": {
+    "lint": "yarn run eslint src/**/*.js --fix",
+    "serve": "yarn run webpack serve"
   }
 }
