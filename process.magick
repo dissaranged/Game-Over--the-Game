@@ -4,3 +4,7 @@ magick convert Coin*.png -crop 200x200+870+505 -background none -bordercolor non
 magick montage croped* -geometry 200x200+0+0  -background none coin.png;
 cp coin.png ../../assets/coin.png
 sxiv croped* coin.png
+
+
+
+magick montage *.png -background none -geometry 256x256+0+0 -trim ../../assets/eboy.png
