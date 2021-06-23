@@ -1,13 +1,16 @@
 export class StateMachine {
   constructor(initialState, possibleStates, stateArgs = []) {
     this.initialState = initialState;
-    this.possibleStates = possibleStates;
+    this.possibleStates = {};
     this.stateArgs = [...stateArgs];
     this.state = null;
 
-    // State instances get access to the state machine via this.stateMachine.
-    for (const state of Object.values(this.possibleStates)) {
-      state.stateMachine = this;
+    // State instances get access to the state machine via this.
+    for ( const [key, state] of Object.entries(possibleStates) ) {
+      this.possibleStates[key] = {
+	enter: state.enter.bind(this),
+	execute: state.execute.bind(this),
+      }
     }
   }
 

@@ -14,7 +14,7 @@ const InitialState = {
     if(sprite.body.touching.down) {
       sprite.play('die', false);
       if(dLeft || dRight) {
-	this.stateMachine.transition('move')
+	this.transition('move')
       }
     }    
   }  
@@ -36,15 +36,15 @@ const IdleState = {
     } = sprite.body.touching;
     /**eslint-enable-region**/
     if ((tDown && dUp) || !tDown) {
-      this.stateMachine.transition('jump', tDown);
+      this.transition('jump', tDown);
       return;
     }
     if (dShift) {
-      this.stateMachine.transition('punch');
+      this.transition('punch');
       return;
     }
     if (tDown && (dLeft || dRight)) {
-      this.stateMachine.transition('move');
+      this.transition('move');
     }
   },
 };
@@ -62,11 +62,11 @@ const MoveState = {
     } = sprite.body.touching;
     /**eslint-enable-region**/
     if(dUp && tDown) {
-      this.stateMachine.transition('jump', true);
+      this.transition('jump', true);
       return;
     }
     if(!tDown) {
-      this.stateMachine.transition('jump', false);
+      this.transition('jump', false);
       return;
     }
     if (dLeft) {
@@ -82,10 +82,10 @@ const MoveState = {
       return;
     }
     if(dShift) {
-      this.stateMachine.transition('punch');
+      this.transition('punch');
       return;
     }
-    this.stateMachine.transition('idle');
+    this.transition('idle');
   },
 };
 
@@ -93,7 +93,7 @@ const JumpState = {
   enter({cursors, sprite}, doJump) {
     sprite.play('jump');
     if(doJump)
-      sprite.setVelocityY(-330);
+      sprite.setVelocityY(-430);
   },
   execute({cursors, sprite}) {
     const { /**eslint-disable-region **/
@@ -106,21 +106,21 @@ const JumpState = {
     } = sprite.body.touching;
     /**eslint-enable-region**/
     if(tDown) {
-      this.stateMachine.transition('idle');
+      this.transition('idle');
       return;
     }
     if(dLeft) {
       sprite.setFlipX(true);
-      sprite.setVelocityX(-60);
+      sprite.setVelocityX(-120);
       return;
     }
     if(dRight) {
       sprite.setFlipX(false);
-      sprite.setVelocityX(60);
+      sprite.setVelocityX(120);
       return
     }
     if(dShift) {
-      this.stateMachine.transition('punch');
+      this.transition('punch');
       return;
     }
   },
@@ -143,14 +143,14 @@ const PunchState = {
     if(tDown) {
       sprite.play('punch', true)
       if(!dShift) {
-	this.stateMachine.transition('idle');
+	this.transition('idle');
 	return;
       }
     }
     if(!tDown) {
       sprite.play('kick')
       if(!dShift) {
-	this.stateMachine.transition('jump');
+	this.transition('jump');
 	return;
       }
     }
@@ -162,7 +162,7 @@ export default class Player extends StateMachine{
     scene.load.spritesheet('eboy', './assets/eboy.png', { frameWidth: 256, frameHeight: 256 });
   }
 
-  constructor(scene, cursors) {
+  constructor(x,y, scene, cursors) {
     super('initial', {
       initial: InitialState,
       idle: IdleState,
@@ -173,13 +173,13 @@ export default class Player extends StateMachine{
     this.stateArgs = [this]
     this.scene = scene;
     this.cursors = cursors;
-    const sprite = scene.physics.add.sprite(100, 100, 'eboy')
+    const sprite = scene.physics.add.sprite(x, y, 'eboy')
 	  .setScale(0.5)
 	  .setBounce(0.2)
 	  .setSize(128,256)
 	  .setCollideWorldBounds(true);
-    this.sprite = sprite;
-
+    this.sprite = sprite;    
+    sprite.stateMachine = this;    
     sprite.anims.create({
       key: 'idle',
       frames: [{ key: 'eboy', frame: 4 }],
