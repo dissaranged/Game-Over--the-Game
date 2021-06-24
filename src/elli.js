@@ -46,6 +46,19 @@ const JumpState = {
   },
 }
 
+const DieState = {
+  enter({sprite}) {
+    sprite.play('die', true);
+    sprite.body.moves = false
+    sprite.once(
+      'animationcomplete',
+      () => sprite.disableBody(true, true),
+    );
+
+  },
+}
+
+
 export default class Elli extends StateMachine{
   static preload(scene) {
     scene.load.spritesheet('elli', './assets/elli.png', { frameWidth: 256, frameHeight: 256 });
@@ -55,6 +68,7 @@ export default class Elli extends StateMachine{
     super('idle', {
       idle: IdleState,
       jump: JumpState,
+      die: DieState,
     });
     this.stateArgs = [this]
     this.scene = scene;

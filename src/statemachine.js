@@ -8,8 +8,8 @@ export class StateMachine {
     // State instances get access to the state machine via this.
     for ( const [key, state] of Object.entries(possibleStates) ) {
       this.possibleStates[key] = {
-	enter: state.enter.bind(this),
-	execute: state.execute.bind(this),
+	enter: state.enter ? state.enter.bind(this) : ()=>{},
+	execute: state.execute? state.execute.bind(this) : ()=>{},
       }
     }
   }

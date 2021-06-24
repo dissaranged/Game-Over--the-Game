@@ -13,6 +13,7 @@
   },
   "scripts": {
     "lint": "yarn run eslint src/**/*.js --fix",
-    "serve": "yarn run webpack serve"
+    "serve": "yarn run webpack serve",
+    "build": "yarn run webpack build"
   }
 }

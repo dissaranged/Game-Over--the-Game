@@ -192,13 +192,7 @@ function hitBomb(player, enemie) {
     (player.body.touching.left && player.flipX)
       || (player.body.touching.right && !player.flipX))
   ) {
-    enemie.anims.play('die');
-    enemie.body.moves = false;
-    enemie.once(
-      'animationcomplete',
-      () => enemie.disableBody(true, true),
-      1300,
-    );
+    enemie.stateMachine.transition('die')
   } else {
     this.physics.pause();
     player.anims.play('die');
