@@ -33,6 +33,7 @@ const JumpState = {
         this.transition('idle');
         return;
       }
+      sprite.play('jump');
       if (sprite.body.center.x > player.body.center.x) {
         sprite.setVelocity(-250, -100);
         sprite.flipX = false;
