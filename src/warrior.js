@@ -117,7 +117,7 @@ export default class Warrior extends StateMachine {
 	  .setScale(0.5)
 	  .setBounce(0.1)
 	  .setSize(256, 256)
-	  .setFriction(2, 0)
+	  .setFriction(0.5, 0)
     	  .setDepth(5)
 	  .setCollideWorldBounds(true);
     this.sprite = sprite;

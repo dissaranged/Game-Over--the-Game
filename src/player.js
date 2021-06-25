@@ -33,12 +33,14 @@ const HurtState = {
     sprite.setVelocityX(right ? 100 : -100);
     sprite.once('animationcomplete', () => {
       scene.cameras.main.zoomTo(1, 50);
+      scene.cameras.main.once('camerazoomcomplete', () => {
       // scene.cameras.main.setRotation(0);
-      if (player.hp < 0) {
-        this.transition('die');
-        return;
-      }
-      this.transition('idle');
+	if (player.hp < 0) {
+          this.transition('die');
+          return;
+	}
+	this.transition('initial');
+      });
     });
   },
 };
@@ -115,7 +117,7 @@ const MoveState = {
 const DieState = {
   enter({ sprite, scene }) {
     sprite.play('die');
-    scene.gameOver();
+    sprite.once('animationcomplete', () => scene.gameOver());
   },
 };
 
@@ -209,6 +211,7 @@ export default class Player extends StateMachine {
 	  .setBounce(0.2)
 	  .setSize(128, 256)
 	  .setDepth(5)
+	  .setFriction(0.1, 0)
 	  .setCollideWorldBounds(true);
     this.sprite = sprite;
     sprite.stateMachine = this;
@@ -235,7 +238,6 @@ export default class Player extends StateMachine {
     sprite.anims.create({
       key: 'die',
       frames: [{ key: 'eboy', frame: 24 }],
-      repeat: -1,
     });
 
     sprite.anims.create({

@@ -210,6 +210,8 @@ export default class Level extends Phaser.Scene {
 
   hitEnemie(player, enemie) {
     if (enemie.stateMachine.state === 'die') return;
+    if(player.stateMachine.state === 'hurt' || player.stateMachine.state === 'initial')
+      return;
     enemie.stateMachine.collideHandler(player, enemie);
   }
 
@@ -226,7 +228,8 @@ export default class Level extends Phaser.Scene {
   }
 
   gameOver() {
-    this.cameras.main.zoomTo(4, 3000);
-    this.physics.pause();
+    console.log('Game Over');
+    this.physics.pause()
+    this.cameras.main.zoomTo(4, 2000);
   }
 }
