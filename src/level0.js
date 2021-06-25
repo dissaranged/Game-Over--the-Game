@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-
+import {random} from './helpers';
 import Player from './player';
 import Elli from './elli';
 import Warrior from './warrior';
@@ -56,7 +56,6 @@ export default class Level extends Phaser.Scene {
   }
 
   createPlatform(x, y, width) {
-    console.log('platform', x, y, width);
     // first
     this.add.tileSprite(x, y, 256, 256, 'ground', 0)
       .setOrigin(0, 0)
@@ -77,7 +76,7 @@ export default class Level extends Phaser.Scene {
         .setDepth(0);
     }
     // solid ground
-    const platform = this.add.rectangle(x, y + 10, width * 256 / 4, 54, debug ? 0x337788 : undefined, 0.5).setOrigin(0, 0);
+    const platform = this.add.rectangle(x, y + 10, width * 256 / 4 -54, 54, debug ? 0x337788 : undefined, 0.5).setOrigin(0, 0);
     platforms.add(platform);
 
     this.platforms.add(platform);
@@ -98,8 +97,44 @@ export default class Level extends Phaser.Scene {
       repeat: -1,
     });
 
-    this.createPlatform(20, 900, 25);
-    this.createElli(500, 700);
+    let x = 100;
+    let y = 900;
+    const easyJump = () => {
+      x += 70;
+      let _y = y
+      do {
+	_y = y - 80 * Phaser.Math.FloatBetween(-1,1);
+      } while(_y > 850 || _y < 200)
+      y = _y;
+      let width = random(3)+2;
+      this.createPlatform(x,y, width);
+      x += width*64;
+    }
+    const backJump = () => {
+      x -= 50 + 50 * Math.random();
+      y -= 54 + 30 * Math.random();
+      let width = random(2)+2;
+      this.createPlatform(x-width*64,y,width)
+    }
+
+    this.createPlatform(20, 900, 5);
+    this.createPlatform(this.width-300, 900, 5);
+
+    while(x < this.width-300) {
+      easyJump();
+      if(x>600) {
+	let dice = random(100);
+	if(dice % 7) {
+	  this.createElli(x-128,y-128);
+	}
+	else if(dice % 15) {
+	  this.createWarrior(x-128, y-128);
+	}
+	if(dice % 3){
+	  this.createCoin(x-64, y-300);
+	}
+      }
+    }
   }
 
   create() {
@@ -167,6 +202,10 @@ export default class Level extends Phaser.Scene {
       this.player.sprite.setVelocity(0, 0);
       this.player.transition('initial');
     }
+    if (player.sprite.x > this.width - 32) {
+      this.gameOver();
+    }
+
   }
 
   hitEnemie(player, enemie) {

@@ -26,13 +26,13 @@ const HurtState = {
     player.hp -= 1;
     scene.hud.update();
     scene.cameras.main.shake(200, 0.05);
-    // scene.cameras.main.zoomTo(1.13, 200);
+    scene.cameras.main.zoomTo(1.13, 200);
     // scene.cameras.main.rotateTo(0.3* sprite.flipX ? -1 : 1, true, 200);
     sprite.play('hurt');
     sprite.setFlipX(right);
-    sprite.setVelocityX(right ? -10 : 10);
+    sprite.setVelocityX(right ? 100 : -100);
     sprite.once('animationcomplete', () => {
-      // scene.cameras.main.zoomTo(1, 50);
+      scene.cameras.main.zoomTo(1, 50);
       // scene.cameras.main.setRotation(0);
       if (player.hp < 0) {
         this.transition('die');
