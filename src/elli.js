@@ -53,9 +53,11 @@ const JumpState = {
 };
 
 const DieState = {
-  enter({ sprite }) {
+  enter({ sprite, player, scene }) {
     sprite.play('die', true);
     sprite.body.moves = false;
+    player.score += 100;
+    scene.hud.update()
     sprite.once(
       'animationcomplete',
       () => sprite.disableBody(true, true),

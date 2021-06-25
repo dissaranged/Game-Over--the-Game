@@ -82,9 +82,12 @@ const AlertState = {
 };
 
 const DieState = {
-  enter({ sprite }) {
+  enter({ sprite, player, scene }) {
     sprite.play('die', true);
     sprite.body.moves = false;
+    player.score += 300;
+    scene.hud.update()
+
     sprite.once(
       'animationcomplete',
       () => sprite.disableBody(true, true),

@@ -221,7 +221,7 @@ export default class Level extends Phaser.Scene {
 
   collectCoin(player, coin) {
     coin.disableBody(true, true);
-    player.score += 10;
+    this.player.score += 10;
     this.hud.update();
   }
 
