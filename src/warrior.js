@@ -20,7 +20,7 @@ const AttackState = {
     } else {
       sprite.setVelocityX(100);
     }
-    (random(100) % 2 == 0) ? sprite.play('kick') : sprite.play('punch');
+    (Math.random() < 0.5) ? sprite.play('kick') : sprite.play('punch');
     sprite.once('animationcomplete', () => this.transition('alert'));
   },
 };
